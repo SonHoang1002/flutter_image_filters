@@ -15,6 +15,7 @@ abstract class ShaderConfiguration extends FilterConfiguration {
     _floats.addAll(value);
     _needRedraw = true;
   }
+  List<double> get floats => _floats;
 
   /// Prepares the shader program
   ///
