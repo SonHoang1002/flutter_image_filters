@@ -10,6 +10,8 @@ class ShaderColorParameter extends ColorParameter {
     this._offset,
   );
 
+  int get offset => _offset;
+
   @override
   FutureOr<void> update(covariant ShaderConfiguration configuration) {
     if (configuration is BunchShaderConfiguration) {
@@ -40,6 +42,8 @@ class ShaderNumberParameter extends NumberParameter {
     super.value,
     this._offset,
   );
+  
+  int get offset => _offset;
 
   @override
   void update(covariant ShaderConfiguration configuration) {
@@ -67,6 +71,8 @@ class ShaderRangeNumberParameter extends RangeNumberParameter {
     super.max,
   });
 
+  int get offset => _offset;
+
   @override
   void update(covariant ShaderConfiguration configuration) {
     if (configuration is BunchShaderConfiguration) {
@@ -90,6 +96,8 @@ class ShaderPointParameter extends PointParameter {
     super.value,
     this._offset,
   );
+  
+  int get offset => _offset;
 
   @override
   void update(covariant ShaderConfiguration configuration) {
@@ -114,6 +122,8 @@ class ShaderMatrix4Parameter extends Mat4Parameter {
     super.value,
     this._offset,
   );
+  
+  int get offset => _offset;
 
   @override
   void update(covariant ShaderConfiguration configuration) {
@@ -138,6 +148,8 @@ class _AspectRatioParameter extends AspectRatioParameter {
     super.value,
     this._offset,
   );
+
+  int get offset => _offset;
 
   @override
   void update(covariant ShaderConfiguration configuration) {
