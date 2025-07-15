@@ -8,6 +8,14 @@ abstract class ShaderConfiguration extends FilterConfiguration {
 
   ShaderConfiguration(this._floats);
 
+  FragmentProgram? get internalProgram => _internalProgram;
+
+  set floats(List<double> value) {
+    _floats.clear();
+    _floats.addAll(value);
+    _needRedraw = true;
+  }
+
   /// Prepares the shader program
   ///
   /// This method is called before the first usage of the shader program
