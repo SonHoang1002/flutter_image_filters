@@ -39,6 +39,6 @@ class _IntSliderParameter extends ShaderRangeNumberParameter {
 
   @override
   void update(ShaderConfiguration configuration) {
-    configuration._floats[_offset] = value.toInt().toDouble();
+    configuration.floats[_offset] = value.toInt().toDouble();
   }
 }

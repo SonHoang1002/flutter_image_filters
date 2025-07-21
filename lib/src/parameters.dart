@@ -20,8 +20,8 @@ class ShaderColorParameter extends ColorParameter {
         update(conf);
       }
     } else {
-      configuration._floats.setAll(_offset, values);
-      configuration._needRedraw = true;
+      configuration. floats.setAll(_offset, values);
+      configuration. needRedraw = true;
     }
   }
 
@@ -53,8 +53,8 @@ class ShaderNumberParameter extends NumberParameter {
         update(conf);
       }
     } else {
-      configuration._floats[_offset] = floatValue;
-      configuration._needRedraw = true;
+      configuration. floats[_offset] = floatValue;
+      configuration. needRedraw = true;
     }
   }
 }
@@ -81,8 +81,8 @@ class ShaderRangeNumberParameter extends RangeNumberParameter {
         update(conf);
       }
     } else {
-      configuration._floats[_offset] = floatValue;
-      configuration._needRedraw = true;
+      configuration. floats[_offset] = floatValue;
+      configuration. needRedraw = true;
     }
   }
 }
@@ -107,8 +107,8 @@ class ShaderPointParameter extends PointParameter {
         update(conf);
       }
     } else {
-      configuration._floats.setAll(_offset, values);
-      configuration._needRedraw = true;
+      configuration. floats.setAll(_offset, values);
+      configuration. needRedraw = true;
     }
   }
 }
@@ -133,8 +133,8 @@ class ShaderMatrix4Parameter extends Mat4Parameter {
         update(conf);
       }
     } else {
-      configuration._floats.setAll(_offset, values);
-      configuration._needRedraw = true;
+      configuration. floats.setAll(_offset, values);
+      configuration. needRedraw = true;
     }
   }
 }
@@ -159,8 +159,8 @@ class _AspectRatioParameter extends AspectRatioParameter {
         update(conf);
       }
     } else {
-      configuration._floats[_offset] = floatValue;
-      configuration._needRedraw = true;
+      configuration. floats[_offset] = floatValue;
+      configuration. needRedraw = true;
     }
   }
 }
@@ -181,8 +181,8 @@ class ShaderIntParameter extends ShaderNumberParameter {
         update(conf);
       }
     } else {
-      configuration._floats[_offset] = intValue.toDouble();
-      configuration._needRedraw = true;
+      configuration. floats[_offset] = intValue.toDouble();
+      configuration. needRedraw = true;
     }
   }
 }
@@ -202,13 +202,13 @@ class ShaderTextureParameter extends DataParameter {
     } else {
       if (asset != null) {
         textureSource = await TextureSource.fromAsset(asset!);
-        configuration._needRedraw = true;
+        configuration.needRedraw = true;
       } else if (file != null) {
         textureSource = await TextureSource.fromFile(file!);
-        configuration._needRedraw = true;
+        configuration.needRedraw = true;
       } else if (data != null) {
         textureSource = await TextureSource.fromMemory(data!);
-        configuration._needRedraw = true;
+        configuration.needRedraw = true;
       }
     }
   }

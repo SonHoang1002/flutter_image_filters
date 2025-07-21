@@ -2,20 +2,23 @@ part of '../../flutter_image_filters.dart';
 
 /// Describes generic shader configuration
 abstract class ShaderConfiguration extends FilterConfiguration {
-  final List<double> _floats;
+  final List<double> floats;
   bool _needRedraw = true;
   FragmentProgram? _internalProgram;
 
-  ShaderConfiguration(this._floats);
+  ShaderConfiguration(this.floats);
 
   FragmentProgram? get internalProgram => _internalProgram;
 
   set floats(List<double> value) {
-    _floats.clear();
-    _floats.addAll(value);
+    floats.clear();
+    floats.addAll(value);
     _needRedraw = true;
   }
-  List<double> get floats => _floats;
+
+  set needRedraw(bool value) {
+    _needRedraw = value;
+  }
 
   /// Prepares the shader program
   ///
@@ -45,7 +48,7 @@ abstract class ShaderConfiguration extends FilterConfiguration {
   bool get ready => _internalProgram != null;
 
   /// Returns all shader uniforms. Order of items in array must be as listed in fragment shader code
-  Iterable<double> get numUniforms => _floats;
+  Iterable<double> get numUniforms => floats;
 
   bool get needRedraw {
     final result = _needRedraw;
@@ -134,7 +137,7 @@ class GroupShaderConfiguration extends ShaderConfiguration {
     for (final configuration in _configurations) {
       final uniforms = _cacheUniforms[configuration];
       if (uniforms != null) {
-        final changed = !listEquals(uniforms, configuration._floats);
+        final changed = !listEquals(uniforms, configuration.floats);
         if (changed) {
           bool found = false;
           for (final c in _configurations) {
@@ -147,7 +150,7 @@ class GroupShaderConfiguration extends ShaderConfiguration {
           }
         }
       }
-      _cacheUniforms[configuration] = [...configuration._floats];
+      _cacheUniforms[configuration] = [...configuration.floats];
       result = (_cache[configuration] ??= await configuration.export(
         texture,
         size,
