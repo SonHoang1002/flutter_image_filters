@@ -57,10 +57,10 @@ class _TemperatureParameter extends ShaderNumberParameter {
       print(
           "_TemperatureParameter update func: configuration is SingleShaderConfiguration.");
       final temperature = value.toDouble();
-      configuration.floats[offset] = temperature < 5000
+      configuration._floats[_offset] = temperature < 5000
           ? 0.0004 * (temperature - 5000.0)
           : 0.00006 * (temperature - 5000.0);
-      configuration.setNeedRedraw = true;
+      configuration._needRedraw = true;
     }
   }
 }
@@ -85,8 +85,97 @@ class _TintParameter extends ShaderNumberParameter {
     } else {
       print(
           "_TintParameter update func: configuration is SingleShaderConfiguration.");
-      configuration.floats[offset] = value.toDouble() / 100.0;
-      configuration.setNeedRedraw = true;
+      configuration._floats[_offset] = value.toDouble() / 100.0;
+      configuration._needRedraw = true;
+    }
+  }
+}
+
+/// version 2
+/// set directly temperature value to shader
+class WhiteBalanceShaderConfiguration2 extends ShaderConfiguration {
+  final NumberParameter _temperature;
+  final NumberParameter _tint;
+
+  WhiteBalanceShaderConfiguration2()
+      : _temperature = _TemperatureParameter2(
+          'inputTemperature',
+          'temperature',
+          0.0,
+          0,
+        ),
+        _tint = _TintParameter2(
+          'inputTint',
+          'tint',
+          0.0,
+          1,
+        ),
+        super([0.0, 0.0]);
+
+  /// Updates the [temperature] value.
+  set temperature(double value) {
+    _temperature.value = value;
+    _temperature.update(this);
+  }
+
+  /// Updates the [tint] value.
+  set tint(double value) {
+    _tint.value = value;
+    _tint.update(this);
+  }
+
+  @override
+  List<ConfigurationParameter> get parameters => [_temperature, _tint];
+}
+
+class _TemperatureParameter2 extends ShaderNumberParameter {
+  _TemperatureParameter2(
+    super.name,
+    super.displayName,
+    super.value,
+    super.offset,
+  );
+
+  @override
+  void update(ShaderConfiguration configuration) {
+    if (configuration is BunchShaderConfiguration) {
+      print(
+          "_TemperatureParameter update func: configuration is BunchShaderConfiguration.");
+      final conf = findByParameter(configuration);
+      if (conf != null) {
+        update(conf);
+      }
+    } else {
+      print(
+          "_TemperatureParameter update func: configuration is SingleShaderConfiguration.");
+      configuration._floats[_offset] = value.toDouble();
+      configuration._needRedraw = true;
+    }
+  }
+}
+
+class _TintParameter2 extends ShaderNumberParameter {
+  _TintParameter2(
+    super.shaderName,
+    super.displayName,
+    super.value,
+    super.offset,
+  );
+
+  @override
+  void update(ShaderConfiguration configuration) {
+    if (configuration is BunchShaderConfiguration) {
+      print(
+          "_TintParameter update func: configuration is BunchShaderConfiguration.");
+      final conf = findByParameter(configuration);
+      if (conf != null) {
+        update(conf);
+      }
+    } else {
+      print(
+          "_TintParameter update func: configuration is SingleShaderConfiguration.");
+      configuration._floats[_offset] = value.toDouble(); // / 100.0;
+      configuration._needRedraw = true;
     }
   }
 }

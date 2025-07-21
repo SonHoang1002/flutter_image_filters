@@ -73,6 +73,6 @@ class _ColorIntensityParameter extends ShaderRangeNumberParameter {
 
   @override
   void update(ShaderConfiguration configuration) {
-    configuration.floats[_offset] = value.toDouble() / 255.0;
+    configuration._floats[_offset] = value.toDouble() / 255.0;
   }
 }

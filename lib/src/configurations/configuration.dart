@@ -2,27 +2,20 @@ part of '../../flutter_image_filters.dart';
 
 /// Describes generic shader configuration
 abstract class ShaderConfiguration extends FilterConfiguration {
-  final List<double> floats;
+  final List<double> _floats;
   bool _needRedraw = true;
   FragmentProgram? _internalProgram;
 
-  ShaderConfiguration(this.floats);
+  ShaderConfiguration(this._floats);
 
   FragmentProgram? get internalProgram => _internalProgram;
 
-  set setFloats(List<double> value) {
-    floats.clear();
-    floats.addAll(value);
-    setNeedRedraw = true;
+  set floats(List<double> value) {
+    _floats.clear();
+    _floats.addAll(value);
+    _needRedraw = true;
   }
-
-  List<double> get getFloats => List.from(floats);
-
-  set setNeedRedraw(bool value) {
-    _needRedraw = value;
-  }
-
-  bool get getNeedRedrawStatus => _needRedraw;
+  List<double> get floats => _floats;
 
   /// Prepares the shader program
   ///
@@ -52,7 +45,7 @@ abstract class ShaderConfiguration extends FilterConfiguration {
   bool get ready => _internalProgram != null;
 
   /// Returns all shader uniforms. Order of items in array must be as listed in fragment shader code
-  Iterable<double> get numUniforms => floats;
+  Iterable<double> get numUniforms => _floats;
 
   bool get needRedraw {
     final result = _needRedraw;
@@ -92,7 +85,7 @@ abstract class ShaderConfiguration extends FilterConfiguration {
 }
 
 class GroupShaderConfiguration extends ShaderConfiguration {
-  Set<ShaderConfiguration> _configurations = {};
+  final Set<ShaderConfiguration> _configurations = {};
   final Map<ShaderConfiguration, Image> _cache = {};
   final Map<ShaderConfiguration, List<double>> _cacheUniforms = {};
   final ShaderConfiguration _configuration = NoneShaderConfiguration();
@@ -100,27 +93,20 @@ class GroupShaderConfiguration extends ShaderConfiguration {
 
   GroupShaderConfiguration({this.reimportImage = false}) : super(<double>[]);
 
-  set setConfigurations(Set<ShaderConfiguration> newConf) {
-    _configurations = newConf;
-  }
-
-  get getConfigurations => _configuration;
+  @override
+  FragmentProgram? get _internalProgram => _configuration._internalProgram;
 
   @override
-  FragmentProgram? get _internalProgram => getConfigurations._internalProgram;
+  bool get needRedraw => _configurations.map((e) => e.needRedraw).any((e) => e);
 
   @override
-  bool get needRedraw =>
-      getConfigurations.map((e) => e.needRedraw).any((e) => e);
+  FutureOr<void> prepare() => _configuration.prepare();
 
   @override
-  FutureOr<void> prepare() => getConfigurations.prepare();
+  FutureOr<void> update() => _configuration.update();
 
   @override
-  FutureOr<void> update() => getConfigurations.update();
-
-  @override
-  FutureOr<void> dispose() => getConfigurations.dispose();
+  FutureOr<void> dispose() => _configuration.dispose();
 
   void add(ShaderConfiguration configuration) {
     _configurations.add(configuration);
@@ -141,17 +127,17 @@ class GroupShaderConfiguration extends ShaderConfiguration {
     TextureSource texture,
     Size size,
   ) async {
-    if (getConfigurations.isEmpty) {
+    if (_configurations.isEmpty) {
       throw UnsupportedError('Group is empty');
     }
     late Image result;
-    for (final configuration in getConfigurations) {
+    for (final configuration in _configurations) {
       final uniforms = _cacheUniforms[configuration];
       if (uniforms != null) {
-        final changed = !listEquals(uniforms, configuration.floats);
+        final changed = !listEquals(uniforms, configuration._floats);
         if (changed) {
           bool found = false;
-          for (final c in getConfigurations) {
+          for (final c in _configurations) {
             if (c == configuration) {
               found = true;
             }
@@ -161,12 +147,12 @@ class GroupShaderConfiguration extends ShaderConfiguration {
           }
         }
       }
-      _cacheUniforms[configuration] = [...configuration.floats];
+      _cacheUniforms[configuration] = [...configuration._floats];
       result = (_cache[configuration] ??= await configuration.export(
         texture,
         size,
       ));
-      if (getConfigurations.length > 1) {
+      if (_configurations.length > 1) {
         if (reimportImage) {
           final data = await result.toByteData(format: ImageByteFormat.png);
           if (data == null) {
@@ -186,21 +172,14 @@ class GroupShaderConfiguration extends ShaderConfiguration {
 }
 
 class BunchShaderConfiguration extends ShaderConfiguration {
-  List<ShaderConfiguration> _configurations;
-
-  set setConfigurations(List<ShaderConfiguration> newConf) {
-    _configurations = newConf;
-  }
-
-  get getConfigurations => _configurations;
+  final List<ShaderConfiguration> _configurations;
 
   @override
   Iterable<double> get numUniforms =>
-      getConfigurations.map((e) => e.numUniforms).expand((e) => e);
+      _configurations.map((e) => e.numUniforms).expand((e) => e);
 
   @override
-  bool get needRedraw =>
-      getConfigurations.map((e) => e.needRedraw).any((e) => e);
+  bool get needRedraw => _configurations.map((e) => e.needRedraw).any((e) => e);
 
   BunchShaderConfiguration(this._configurations) : super(<double>[]);
 
@@ -212,5 +191,5 @@ class BunchShaderConfiguration extends ShaderConfiguration {
 
   @override
   List<ConfigurationParameter> get parameters =>
-      getConfigurations.map((e) => e.parameters).expand((e) => e).toList();
+      _configurations.map((e) => e.parameters).expand((e) => e).toList();
 }
