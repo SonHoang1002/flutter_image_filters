@@ -10,15 +10,19 @@ abstract class ShaderConfiguration extends FilterConfiguration {
 
   FragmentProgram? get internalProgram => _internalProgram;
 
-  set floats(List<double> value) {
+  set setFloats(List<double> value) {
     floats.clear();
     floats.addAll(value);
-    _needRedraw = true;
+    setNeedRedraw = true;
   }
 
-  set needRedraw(bool value) {
+  List<double> get getFloats => List.from(floats);
+
+  set setNeedRedraw(bool value) {
     _needRedraw = value;
   }
+
+  bool get getNeedRedrawStatus => _needRedraw;
 
   /// Prepares the shader program
   ///
@@ -88,7 +92,7 @@ abstract class ShaderConfiguration extends FilterConfiguration {
 }
 
 class GroupShaderConfiguration extends ShaderConfiguration {
-  final Set<ShaderConfiguration> _configurations = {};
+  Set<ShaderConfiguration> _configurations = {};
   final Map<ShaderConfiguration, Image> _cache = {};
   final Map<ShaderConfiguration, List<double>> _cacheUniforms = {};
   final ShaderConfiguration _configuration = NoneShaderConfiguration();
@@ -96,20 +100,27 @@ class GroupShaderConfiguration extends ShaderConfiguration {
 
   GroupShaderConfiguration({this.reimportImage = false}) : super(<double>[]);
 
-  @override
-  FragmentProgram? get _internalProgram => _configuration._internalProgram;
+  set setConfigurations(Set<ShaderConfiguration> newConf) {
+    _configurations = newConf;
+  }
+
+  get getConfigurations => _configuration;
 
   @override
-  bool get needRedraw => _configurations.map((e) => e.needRedraw).any((e) => e);
+  FragmentProgram? get _internalProgram => getConfigurations._internalProgram;
 
   @override
-  FutureOr<void> prepare() => _configuration.prepare();
+  bool get needRedraw =>
+      getConfigurations.map((e) => e.needRedraw).any((e) => e);
 
   @override
-  FutureOr<void> update() => _configuration.update();
+  FutureOr<void> prepare() => getConfigurations.prepare();
 
   @override
-  FutureOr<void> dispose() => _configuration.dispose();
+  FutureOr<void> update() => getConfigurations.update();
+
+  @override
+  FutureOr<void> dispose() => getConfigurations.dispose();
 
   void add(ShaderConfiguration configuration) {
     _configurations.add(configuration);
@@ -130,17 +141,17 @@ class GroupShaderConfiguration extends ShaderConfiguration {
     TextureSource texture,
     Size size,
   ) async {
-    if (_configurations.isEmpty) {
+    if (getConfigurations.isEmpty) {
       throw UnsupportedError('Group is empty');
     }
     late Image result;
-    for (final configuration in _configurations) {
+    for (final configuration in getConfigurations) {
       final uniforms = _cacheUniforms[configuration];
       if (uniforms != null) {
         final changed = !listEquals(uniforms, configuration.floats);
         if (changed) {
           bool found = false;
-          for (final c in _configurations) {
+          for (final c in getConfigurations) {
             if (c == configuration) {
               found = true;
             }
@@ -155,7 +166,7 @@ class GroupShaderConfiguration extends ShaderConfiguration {
         texture,
         size,
       ));
-      if (_configurations.length > 1) {
+      if (getConfigurations.length > 1) {
         if (reimportImage) {
           final data = await result.toByteData(format: ImageByteFormat.png);
           if (data == null) {
@@ -175,14 +186,21 @@ class GroupShaderConfiguration extends ShaderConfiguration {
 }
 
 class BunchShaderConfiguration extends ShaderConfiguration {
-  final List<ShaderConfiguration> _configurations;
+  List<ShaderConfiguration> _configurations;
+
+  set setConfigurations(List<ShaderConfiguration> newConf) {
+    _configurations = newConf;
+  }
+
+  get getConfigurations => _configurations;
 
   @override
   Iterable<double> get numUniforms =>
-      _configurations.map((e) => e.numUniforms).expand((e) => e);
+      getConfigurations.map((e) => e.numUniforms).expand((e) => e);
 
   @override
-  bool get needRedraw => _configurations.map((e) => e.needRedraw).any((e) => e);
+  bool get needRedraw =>
+      getConfigurations.map((e) => e.needRedraw).any((e) => e);
 
   BunchShaderConfiguration(this._configurations) : super(<double>[]);
 
@@ -194,5 +212,5 @@ class BunchShaderConfiguration extends ShaderConfiguration {
 
   @override
   List<ConfigurationParameter> get parameters =>
-      _configurations.map((e) => e.parameters).expand((e) => e).toList();
+      getConfigurations.map((e) => e.parameters).expand((e) => e).toList();
 }

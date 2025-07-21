@@ -57,10 +57,10 @@ class _TemperatureParameter extends ShaderNumberParameter {
       print(
           "_TemperatureParameter update func: configuration is SingleShaderConfiguration.");
       final temperature = value.toDouble();
-      configuration.floats[_offset] = temperature < 5000
+      configuration.floats[offset] = temperature < 5000
           ? 0.0004 * (temperature - 5000.0)
           : 0.00006 * (temperature - 5000.0);
-      configuration.needRedraw = true;
+      configuration.setNeedRedraw = true;
     }
   }
 }
@@ -85,8 +85,8 @@ class _TintParameter extends ShaderNumberParameter {
     } else {
       print(
           "_TintParameter update func: configuration is SingleShaderConfiguration.");
-      configuration.floats[_offset] = value.toDouble() / 100.0;
-      configuration.needRedraw = true;
+      configuration.floats[offset] = value.toDouble() / 100.0;
+      configuration.setNeedRedraw = true;
     }
   }
 }

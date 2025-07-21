@@ -20,8 +20,8 @@ class ShaderColorParameter extends ColorParameter {
         update(conf);
       }
     } else {
-      configuration. floats.setAll(_offset, values);
-      configuration. needRedraw = true;
+      configuration.floats.setAll(_offset, values);
+      configuration.setNeedRedraw = true;
     }
   }
 
@@ -34,7 +34,7 @@ class ShaderColorParameter extends ColorParameter {
 }
 
 class ShaderNumberParameter extends NumberParameter {
-  final int _offset;
+  int _offset;
 
   ShaderNumberParameter(
     super.shaderName,
@@ -42,8 +42,12 @@ class ShaderNumberParameter extends NumberParameter {
     super.value,
     this._offset,
   );
-  
+
   int get offset => _offset;
+
+  set setOffset(int newOffset) {
+    _offset = newOffset;
+  }
 
   @override
   void update(covariant ShaderConfiguration configuration) {
@@ -53,8 +57,8 @@ class ShaderNumberParameter extends NumberParameter {
         update(conf);
       }
     } else {
-      configuration. floats[_offset] = floatValue;
-      configuration. needRedraw = true;
+      configuration.floats[_offset] = floatValue;
+      configuration.setNeedRedraw = true;
     }
   }
 }
@@ -81,8 +85,8 @@ class ShaderRangeNumberParameter extends RangeNumberParameter {
         update(conf);
       }
     } else {
-      configuration. floats[_offset] = floatValue;
-      configuration. needRedraw = true;
+      configuration.floats[_offset] = floatValue;
+      configuration.setNeedRedraw = true;
     }
   }
 }
@@ -96,7 +100,7 @@ class ShaderPointParameter extends PointParameter {
     super.value,
     this._offset,
   );
-  
+
   int get offset => _offset;
 
   @override
@@ -107,8 +111,8 @@ class ShaderPointParameter extends PointParameter {
         update(conf);
       }
     } else {
-      configuration. floats.setAll(_offset, values);
-      configuration. needRedraw = true;
+      configuration.floats.setAll(_offset, values);
+      configuration.setNeedRedraw = true;
     }
   }
 }
@@ -122,7 +126,7 @@ class ShaderMatrix4Parameter extends Mat4Parameter {
     super.value,
     this._offset,
   );
-  
+
   int get offset => _offset;
 
   @override
@@ -133,8 +137,8 @@ class ShaderMatrix4Parameter extends Mat4Parameter {
         update(conf);
       }
     } else {
-      configuration. floats.setAll(_offset, values);
-      configuration. needRedraw = true;
+      configuration.floats.setAll(_offset, values);
+      configuration.setNeedRedraw = true;
     }
   }
 }
@@ -159,8 +163,8 @@ class _AspectRatioParameter extends AspectRatioParameter {
         update(conf);
       }
     } else {
-      configuration. floats[_offset] = floatValue;
-      configuration. needRedraw = true;
+      configuration.floats[_offset] = floatValue;
+      configuration.setNeedRedraw = true;
     }
   }
 }
@@ -181,8 +185,8 @@ class ShaderIntParameter extends ShaderNumberParameter {
         update(conf);
       }
     } else {
-      configuration. floats[_offset] = intValue.toDouble();
-      configuration. needRedraw = true;
+      configuration.floats[_offset] = intValue.toDouble();
+      configuration.setNeedRedraw = true;
     }
   }
 }
@@ -202,13 +206,13 @@ class ShaderTextureParameter extends DataParameter {
     } else {
       if (asset != null) {
         textureSource = await TextureSource.fromAsset(asset!);
-        configuration.needRedraw = true;
+        configuration.setNeedRedraw = true;
       } else if (file != null) {
         textureSource = await TextureSource.fromFile(file!);
-        configuration.needRedraw = true;
+        configuration.setNeedRedraw = true;
       } else if (data != null) {
         textureSource = await TextureSource.fromMemory(data!);
-        configuration.needRedraw = true;
+        configuration.setNeedRedraw = true;
       }
     }
   }
