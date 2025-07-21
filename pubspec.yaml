@@ -61,4 +61,5 @@ flutter:
     - shaders/vibrance.frag
     - shaders/vignette.frag
     - shaders/white_balance.frag
+    - shaders/white_balance_2.frag
     - shaders/zoom_blur.frag

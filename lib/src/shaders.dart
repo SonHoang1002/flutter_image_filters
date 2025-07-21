@@ -18,6 +18,8 @@ Map<Type, Future<FragmentProgram> Function()> _fragmentPrograms = {
       FragmentProgram.fromAsset('${_shadersRoot}shaders/zoom_blur.frag'),
   WhiteBalanceShaderConfiguration: () =>
       FragmentProgram.fromAsset('${_shadersRoot}shaders/white_balance.frag'),
+        WhiteBalanceShaderConfiguration2: () =>
+      FragmentProgram.fromAsset('${_shadersRoot}shaders/white_balance_2.frag'),
   VignetteShaderConfiguration: () =>
       FragmentProgram.fromAsset('${_shadersRoot}shaders/vignette.frag'),
   VibranceShaderConfiguration: () =>

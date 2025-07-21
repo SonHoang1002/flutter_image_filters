@@ -98,6 +98,7 @@ class FlutterImageFilters {
     'Vibrance': () => VibranceShaderConfiguration(),
     'Vignette': () => VignetteShaderConfiguration(),
     'White Balance': () => WhiteBalanceShaderConfiguration(),
+    'White Balance 2': () => WhiteBalanceShaderConfiguration2(),
     'Zoom Blur': () => ZoomBlurShaderConfiguration(),
   };
 
